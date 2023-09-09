@@ -34,28 +34,25 @@
 ;(remv-1st 'z '(a b c))
 
 ;4.-
-#|
 (define (map p ls)
   (if (null? ls)
       '()
       (if (null? (cdr ls))
           (p (car ls))
           (cons (p (car ls)) (map p (cdr ls))))))
-(map sub1 '(1 2 3 4))
-|#
-;Preguntar maestro mañana
+;(map sub1 '(1 2 3 4))
+
 
 ;5.-
 (define (filter pred ls)
   (if (null? ls)
       '()
       (cond
-        [(and (pred (car ls)) (null? (cdr ls))) (car ls)]
+        [(and (pred (car ls)) (null? (cdr ls))) (cons (car ls) empty)]
         [(pred (car ls)) (cons (car ls) (filter pred (cdr ls)))]
-        [(null? (cdr ls)) null]
+        [(null? (cdr ls)) (empty)]
         [else (filter pred (cdr ls))])))
-(filter even? '(1 2 3 4 5 6))
-;Preguntar maestro mañana
+;(filter even? '(1 2 3 4 5 6))
 
 ;6.-
 (define (zip ls1 ls2)
@@ -86,12 +83,17 @@
 
 ;9.-
 (define (reverse ls)
-  (cond
-    [(null? ls)'()]
-    [(eqv? (last ls) (car ls)) (car ls)]
-    [else (cons (reverse (cdr ls)) (car ls))]))
-(reverse '(a 3 x))
+  (if (null? ls)
+    '()
+    (append (reverse (cdr ls))(cons (car ls) empty)))) ;using self-defined append woohoo
+;(reverse '(a 3 x))
 
+;10.-
+(define (repeat ls rept)
+  (if (zero? rept)
+      '()
+      (append ls (repeat ls (sub1 rept))))) ;using self-defined append woohoo
+;(repeat '(4 8 11) 4)
 
 ;18.-
 (define (powerset s)
@@ -100,8 +102,7 @@
       (let ((x(first s)); first element
             (xs (rest s))) ; rest
         (let ((ss (powerset xs)))
-          (append ss (map (lambda (s) (cons x s))
+          (append ss (map (lambda (s) (cons x s)) ;using self-defined append woohoo
                           ss))))))
-(powerset '(3 2 1))
-
-  
+;(powerset '(3 2 1))
+;Done in class
