@@ -37,7 +37,7 @@
 (define (map p ls)
   (if (null? ls)
       '()
-      (if (null? (cdr ls))
+      (if (null? ls)
           (p (car ls))
           (cons (p (car ls)) (map p (cdr ls))))))
 ;(map sub1 '(1 2 3 4))
@@ -104,5 +104,5 @@
         (let ((ss (powerset xs)))
           (append ss (map (lambda (s) (cons x s)) ;using self-defined append woohoo
                           ss))))))
-;(powerset '(3 2 1))
+;(powerset '(1 2 3))
 ;Done in class
