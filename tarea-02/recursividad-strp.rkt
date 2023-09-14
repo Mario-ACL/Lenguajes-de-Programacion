@@ -1,4 +1,3 @@
-#lang racket
 ;; Program layout:
 ; number.- ;current exercise from Tarea 2
 ; program

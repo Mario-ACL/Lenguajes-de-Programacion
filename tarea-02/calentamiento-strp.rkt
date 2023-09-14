@@ -1,4 +1,3 @@
-#lang racket
 
 (define pi 3.14)
 (define (area-circle r)
