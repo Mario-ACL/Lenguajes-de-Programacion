@@ -185,3 +185,109 @@
 ;(cartesian-product '((5 4) (3 2 1)))
 
 ;20.-
+;insert
+(define (insertL-fr x y L)
+  (define (insert-x z elem)
+    (if (eqv? x z)
+        (cons y (cons z elem))
+        (cons z elem)))
+  (foldr insert-x '() L))
+;(insertL-fr 'x 'y '(x z z x y x))
+
+;filter
+(define (filter-fr pred L)
+  (define (filter-x act ls)
+    (if (pred act)
+        (cons act ls)
+        ls))
+  (foldr filter-x '() L))
+;(filter-fr even? '(1 2 3 4 5 6))
+
+;map
+(define (map-fr func L)
+  (define (map-x act ls)
+    (cons (func act) ls))
+  (foldr map-x '() L))
+;(map sub1 '(1 2 3 4))
+
+;append
+(define (append-fr ls1 ls2)
+  (foldr cons ls2 ls1))
+;(append '(42 120) '(1 2 3))
+;(append '(a b c) '(cat dog))
+
+;reverse
+(define (reverse-fr L)
+  (define (reverse-x x ls)
+    (append ls (list x)))
+  (foldr reverse-x '() L))
+;(reverse '(a 3 x))
+
+;binary->natural
+(define (binary->natural-fr L)
+  (define (binary->natural-x x ls)
+    (+ x (* 2 ls)))
+  (foldr binary->natural-x 0 L))
+#|
+(binary->natural '())
+(binary->natural '(0 0 1))
+(binary->natural '(0 0 1 1))
+(binary->natural '(1 1 1 1))
+(binary->natural '(1 0 1 0 1))
+(binary->natural '(1 1 1 1 1 1 1 1 1 1 1 1 1))
+|#
+
+;append-map
+(define (append-map-fr func L)
+  (define (append-map-x x ls)
+    (append (func x) ls))
+  (foldr append-map-x '() L))
+;(append-map countdown (countdown 5))
+
+;set-difference
+(define (set-difference-fr ls1 ls2)
+  (define (set-difference-x x ls)
+    (if (member x ls2)
+        ls
+        (cons x ls)))
+  (foldr set-difference-x '() ls1))
+(set-difference '(1 2 3 4 5) '(2 6 4 8))
+
+;powerset
+(define (powerset-fr s)
+  (define (powerset-x x ps)
+    (append (map (lambda (comb) (cons x comb)) ps) ps))
+  
+  (foldr powerset-x (list '()) s))
+;(powerset-fr '(3 2 1))
+
+;21.-
+(define snowball
+  (letrec
+      ((odd-case
+        (lambda (fix-odd)
+          (lambda (x)
+            (cond
+              ((and (exact-integer? x) (positive? x) (odd? x)) (snowball
+                                                                (add1 (* x 3))))
+                                                                                (else (fix-odd x))))))
+       (even-case
+        (lambda (fix-even)
+          (lambda (x)
+            (cond
+              ((and (exact-integer? x) (positive? x) (even? x)) (snowball
+                                                                 (/ x 2)))
+              (else (fix-even x))))))
+       (one-case
+        (lambda (fix-one)
+          (lambda (x)
+            (cond
+              ((zero? (sub1 x)) 1)
+              (else (fix-one x))))))
+       (base
+        (lambda (x)
+          (error 'error "Invalid value ~s~n" x)))) (one-case (even-case (odd-case base)))))
+;(snowball 12)
+
+(define (quine)
+  ((λ (x) `(,x ',x)) '(λ (x) `(,x ',x))))
