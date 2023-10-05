@@ -1,0 +1,7 @@
+open-paren=\(
+close-paren=\)
+define=(?:define)
+sum=\+
+mult=\*
+identifier=[abc][abc1234567890]*
+number=[ε + + + -][1234567890][1234567890]*
