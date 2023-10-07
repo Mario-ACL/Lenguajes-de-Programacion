@@ -1,10 +1,12 @@
 #lang racket
 (define debug? #f)
+
 (define (read-char* input)
   (define ch (read-char input))
   (when debug?
     (printf "read char ~s from input~%" ch))
   ch)
+
 (define (peek-char* input)
   (define ch (peek-char input))
   (when debug?
@@ -13,50 +15,61 @@
 
 (define (char-digit? ch)
   (char<=? #\0 ch #\9))
+
 (define (char-varletter? ch)
   (member ch '(#\x #\y #\z) char=?))
+
 (define (char-delimiter? ch)
   (or (eof-object? ch)
       (char-whitespace? ch)
       (member ch '(#\( #\)))))
+
 (define lex-path "<unknown>")
 (define lex-line 0)
 (define lex-col 0)
 (struct token (type value line col)
   #:transparent)
+
 (define (token-open-paren)
   (token 'open-paren #f lex-line lex-col))
 (define (token-close-paren)
   (token 'close-paren #f lex-line lex-col))
+
 (define (token-binop type)
   (token 'binop type lex-line lex-col))
 (define (token-number value col)
   (token 'number value lex-line col))
-(define (token-number/+ token)
-  (token 'number
-         (token-value token)
-         (token-line token)
-         (sub1 (token-col token))))
 
-(define (token-number/- token)
+(define (token-number/+ token-original) ;modified token -> token-original to not overshadow token
   (token 'number
-         (- (token-value token))
-         (token-line token)
-         (sub1 (token-col token))))
+         (token-value token-original)
+         (token-line token-original)
+         (sub1 (token-col token-original))))
+
+(define (token-number/- token-original) ;modified token -> token-original to not overshadow token
+  (token 'number
+         (- (token-value token-original))
+         (token-line token-original)
+         (sub1 (token-col token-original))))
+
 (define (token-identifier symbol col)
   (token 'identifier symbol lex-line col))
+
 (define (token-define col)
   (token 'define #f lex-line col))
+
 (define (lex-open-paren chars)
   (read-char* chars)
   (let ([token (token-open-paren)])
     (set! lex-col (add1 lex-col))
     (stream-cons token (lex chars))))
+
 (define (lex-close-paren chars)
   (read-char* chars)
   (let ([token (token-close-paren)])
     (set! lex-col (add1 lex-col))
     (stream-cons token (lex chars))))
+
 (define (lex-whitespace chars)
   (define ch (read-char* chars))
   (cond
@@ -66,11 +79,12 @@
     [else
      (set! lex-col (add1 lex-col))])
   (lex chars))
+
 (define (lex-sum-or-number chars)
   (read-char* chars)
   (let ([ch (peek-char* chars)])
     (cond
-      [(char-digit? ch)
+      [(and (not (eof-object? ch))(char-digit? ch)) ;modified to not accept eof objects
        (set! lex-col (add1 lex-col))
        (let* ([tokens (lex-plain-number chars)]
               [token (token-number/+ (stream-first tokens))])
@@ -107,7 +121,7 @@
 
 (define (lex-identifier-or-keyword chars)
   (define (read-alphanumeric strport is-identifier?)
-    (write (read-char* chars) strport)
+    (display (read-char* chars) strport);modified to add characters correctly
     (set! lex-col (add1 lex-col))
     (let [(ch (peek-char* chars))]
       (cond [(char-delimiter? ch)
@@ -132,7 +146,9 @@
          (stream-cons token (lex chars)))]
       [else
        (signal-lex-error "expected define or identifier" lex-line col)])))
+
 (define zero-char-val (char->integer #\0))
+
 (define (lex-plain-number chars)
   (define (build-integer value)
     (define d (- (char->integer (read-char* chars)) zero-char-val))
@@ -148,12 +164,15 @@
          [value (build-integer 0)]
          [token (token-number value col)])
     (stream-cons token (lex chars))))
+
 (define (lex-end-of-file chars)
   (close-input-port chars)
   empty-stream)
+
 (define (signal-lex-error message line col)
   (error 'lex (format "lexical error at ~a:~a:~a: ~a" lex-path line col
                       message)))
+
 (define (lex chars)
   (define ch (peek-char* chars))
   (cond
@@ -173,6 +192,7 @@
   (set! lex-line 1)
   (set! lex-col 0)
   (lex (open-input-file path #:mode 'text)))
+
 (define (lex-from-string str)
   (set! lex-path "<unknown>")
   (set! lex-line 1)
@@ -180,5 +200,6 @@
   (lex (open-input-string str)))
 
 (provide lex-from-file
-         lex-from-string)
+         lex-from-string
+         token);added token for lexer-test.rkt
 

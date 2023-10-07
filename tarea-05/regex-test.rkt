@@ -6,17 +6,31 @@
   (test-suite
    "Pruebas para regex.rkt"
    (test-case "open-paren-regex"
-              (check-equal? (regexp-match open-paren-regex "(Hola)") '("(")))
+              (check-true (regexp-match-exact? open-paren-regex "("))
+              (check-false (regexp-match-exact? open-paren-regex ")"))
+              (check-false (regexp-match open-paren-regex "Hi")))
    (test-case "close-paren-regex"
-              (check-equal? (regexp-match close-paren-regex "(Wow)") '(")")))
+              (check-true (regexp-match-exact? close-paren-regex ")"))
+              (check-false (regexp-match-exact? close-paren-regex "("))
+              (check-false (regexp-match-exact? close-paren-regex "420")))
    (test-case "define-regex"
-              (check-equal? (regexp-match define-regex "define (funcion x))") '("define")))
+              (check-true (regexp-match-exact? define-regex "define"))
+              (check-false (regexp-match-exact? define-regex "defino"))
+              (check-false (regexp-match-exact? define-regex "this is wrong")))
    (test-case "sum-regex"
-              (check-equal? (regexp-match sum-regex "(+ 5 6)") '("+")))
+              (check-true (regexp-match-exact? sum-regex "+"))
+              (check-false (regexp-match-exact? sum-regex "*"))
+              (check-false (regexp-match-exact? sum-regex "wrong - correct")))
    (test-case "mult-regex"
-              (check-equal? (regexp-match mult-regex "(* 5 6)") '("*")))
+              (check-true (regexp-match-exact? mult-regex "*"))
+              (check-false (regexp-match-exact? mult-regex "+"))
+              (check-false (regexp-match-exact? mult-regex "wrong + really - 5")))
    (test-case "identifier-regex"
-              (check-equal? (regexp-match identifier-regex "(define x)") '("x")))
+              (check-true (regexp-match-exact? identifier-regex "x5"))
+              (check-false (regexp-match-exact? identifier-regex "g"))
+              (check-false (regexp-match-exact? identifier-regex "99No")))
    (test-case "number-regex"
-              (check-equal? (regexp-match number-regex "55 hola") '("55")))))
+              (check-true (regexp-match-exact? number-regex "55"))
+              (check-false (regexp-match-exact? number-regex "a55"))
+              (check-false (regexp-match-exact? number-regex "Esto no es numero")))))
 (run-tests regex-tests 'verbose)
