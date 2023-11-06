@@ -1,3 +1,6 @@
 
 tarea-07/compiled/drracket/errortrace/let-locs_rkt.dep
 tarea-07/compiled/drracket/errortrace/let-locs_rkt.zo
+*.bak
+*.dep
+*.zo
