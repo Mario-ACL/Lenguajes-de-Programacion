@@ -14,6 +14,12 @@
 (struct plus-exp expression (exp1 exp2) #:transparent)
 (struct mult-exp expression (exp1 exp2) #:transparent)
 (struct div-exp expression (exp1 exp2) #:transparent)
+(struct cons-exp expression (exp1 exp2) #:transparent)
+(struct car-exp expression (exp1) #:transparent)
+(struct cdr-exp expression (exp1) #:transparent)
+(struct null?-exp expression (exp1) #:transparent)
+(struct emptylist-exp expression () #:transparent)
+(struct list-exp expression (exps) #:transparent)
 
 (provide
  expression?
@@ -28,4 +34,10 @@
   [struct minus-exp ((exp1 expression?))]
   [struct plus-exp ((exp1 expression?)(exp2 expression?))]
   [struct mult-exp ((exp1 expression?) (exp2 expression?))]
-  [struct div-exp ((exp1 expression?)(exp2 expression?))]))
+  [struct div-exp ((exp1 expression?)(exp2 expression?))]
+  [struct cons-exp ((exp1 expression?)(exp2 expression?))]
+  [struct car-exp ((exp1 expression?))]
+  [struct cdr-exp ((exp1 expression?))]
+  [struct null?-exp ((exp1 expression?))]
+  [struct emptylist-exp ()]
+  [struct list-exp ((exps (listof expression?)))]))

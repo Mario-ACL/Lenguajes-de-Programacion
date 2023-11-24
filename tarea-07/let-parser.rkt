@@ -35,6 +35,12 @@
                     [(in-token) "in keyword"]
                     [(minus-token) "minus operator"]
                     [(plus-token) "+ operator"]
+                    [(cons-token) "cons operator"]
+                    [(car-token) "car operator"]
+                    [(cdr-token) "cdr operator"]
+                    [(null?-token) "null? operator"]
+                    [(emptylist-token) "emptylist value"]
+                    [(list-token) "list operator"]
                     [_ "unexpected token"]))
           beg end)])))
 
@@ -106,7 +112,31 @@
                          (guard (expect-sugar equals-token?) "binding operator")
                          (guard parse-expression "an expression")
                          (guard (expect-sugar in-token?) "in keyword")
-                         (guard parse-expression "an expression")))
+                         (guard parse-expression "an expression"))
+              (parse/seq cons-exp
+                         (expect-sugar cons-token?)
+                         (guard (expect-sugar open-paren-token?) "open parenthesis")
+                         (guard parse-expression "an expression")
+                         (guard (expect-sugar comma-token?) "a comma")
+                         (guard parse-expression "an expression")
+                         (guard (expect-sugar close-paren-token?) "close parenthesis"))
+              (parse/seq car-exp
+                         (expect-sugar car-token?)
+                         (guard (expect-sugar open-paren-token?) "open parenthesis")
+                         (guard parse-expression "an expression")
+                         (guard (expect-sugar close-paren-token?) "close parenthesis"))
+              (parse/seq cdr-exp
+                         (expect-sugar cdr-token?)
+                         (guard (expect-sugar open-paren-token?) "open parenthesis")
+                         (guard parse-expression "an expression")
+                         (guard (expect-sugar close-paren-token?) "close parenthesis"))
+              (parse/seq null?-exp
+                         (expect-sugar null?-token?)
+                         (guard (expect-sugar open-paren-token?) "open parenthesis")
+                         (guard parse-expression "an expression")
+                         (guard (expect-sugar close-paren-token?) "close parenthesis"))
+              (parse/seq emptylist-exp
+                         (expect-sugar emptylist-token?)))
    tokens))
 
 (define (parse/alt . parsers)
@@ -161,5 +191,21 @@
 
 (define (expect-sugar token?)
   (expect-some token? (const 'ignore)))
+
+(define parse-oparen
+    (expect-some open-paren-token?
+                 (lambda (token) 0)))
+
+(define parse-cparen
+    (expect-some close-paren-token?
+                 (lambda (token) 1)))
+
+(define (parse-paren tokens)
+  (define-values (val1 tokens1)
+    (parse-oparen tokens))
+  (cond
+    [(equal? val1 #f) (values #f tokens)]
+    [(equal? val1 'ignore) (parse-cparen tokens1)]
+    [(equal? val1 #t) (parse-oparen tokens1)]));added by me
 
 (provide parse-let)

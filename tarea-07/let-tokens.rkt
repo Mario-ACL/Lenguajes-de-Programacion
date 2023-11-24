@@ -22,6 +22,12 @@
 (struct plus-token token () #:transparent)
 (struct mult-token token () #:transparent)
 (struct div-token token () #:transparent)
+(struct cons-token token () #:transparent)
+(struct car-token token () #:transparent)
+(struct cdr-token token () #:transparent)
+(struct null?-token token () #:transparent)
+(struct emptylist-token token () #:transparent)
+(struct list-token token () #:transparent)
 
 (provide
  token?
@@ -43,4 +49,11 @@
   [struct minus-token ()]
   [struct plus-token ()]
   [struct mult-token ()]
-  [struct div-token ()]))
+  [struct div-token ()]
+  [struct cons-token ()]
+  [struct car-token ()]
+  [struct cdr-token ()]
+  [struct null?-token ()]
+  [struct emptylist-token ()]
+  [struct list-token ()]
+  ))

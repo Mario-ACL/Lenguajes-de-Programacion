@@ -49,6 +49,18 @@
             (close-paren-token)
             (close-paren-token))))
 
+   (test-case "list token"
+     (check-equal?
+      (tokenize "list(1, 2, 3)")
+      (list (list-token)
+            (open-paren-token)
+            (int-token 1)
+            (comma-token)
+            (int-token 2)
+            (comma-token)
+            (int-token 3)
+            (close-paren-token))))
+
    (test-case "example 1p"
      (check-equal?
       (tokenize "+(55, +(x, 11))")
@@ -256,6 +268,15 @@ in let y = 2
             (close-paren-token)
             (comma-token)
             (int-token 2)
-            (close-paren-token))))))
+            (close-paren-token))))
+(test-case "tokens for lists processing"
+           (check-equal?
+            (tokenize "cons(1,2)")
+            (list (cons-token)
+                  (open-paren-token)
+                  (int-token 1)
+                  (comma-token)
+                  (int-token 2)
+                  (close-paren-token))))))
 
 (run-tests lexer-tests 'verbose)

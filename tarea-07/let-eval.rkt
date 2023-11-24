@@ -29,7 +29,12 @@
                  (expval->num (value-of exp2 env))))]
     [(mult-exp exp1 exp2)
      (num-val (* (expval->num (value-of exp1 env))
-                 (expval->num (value-of exp2 env))))];agregar div
+                 (expval->num (value-of exp2 env))))]
+    [(div-exp exp1 exp2)
+     (if (equal? 0 (expval->num (value-of exp2 env)))
+         (error (format "Divide by zero encountered"))
+         (num-val (quotient (expval->num (value-of exp1 env)) ;use of quotient to avoid decimals in result and expressions
+                            (expval->num (value-of exp2 env)))))]
     [(zero?-exp exp1)
      (bool-val (zero? (expval->num (value-of exp1 env))))]
     [(if-exp exp1 exp2 exp3)
@@ -38,6 +43,10 @@
          (value-of exp3 env))]
     [(let-exp var exp1 body)
      (value-of body (extend-env var (value-of exp1 env) env))]
+    [(cons-exp exp1 exp2)
+     (let ([val1 (value-of exp1 env)]
+           [val2 (value-of exp2 env)])
+       (pair-val (cons val1 val2)))]
     [_
      (error (format "Expected expression but got ~a" exp))]))
 
