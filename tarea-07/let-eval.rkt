@@ -71,6 +71,18 @@
      (let ([val1 (value-of exp1 env)]
            [val2 (value-of exp2 env)])
        (pair-val (cons val1 val2)))]
+    [(car-exp exp1)
+     (let ([val (value-of exp1 env)])
+       (match val
+         [(pair-val x) (car x)]))]
+    [(cdr-exp exp1)
+     (let ([val (value-of exp1 env)])
+       (match val
+         [(pair-val x) (cdr x)]))]
+    [(null?-exp exp1)
+     (bool-val (equal? (value-of exp1 env) null-val))]
+    [(emptylist-exp)
+     (null-val)]
     [(print-exp exp1)
      (print-value-of(value-of exp1 env))
      (printf " ")

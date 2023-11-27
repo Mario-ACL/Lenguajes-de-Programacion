@@ -138,6 +138,17 @@
                          (guard (expect-sugar close-paren-token?) "close parenthesis"))
               (parse/seq emptylist-exp
                          (expect-sugar emptylist-token?))
+              (parse/seq emptylist-exp
+                         (expect-sugar list-token?)
+                         (guard (expect-sugar open-paren-token?) "open parenthesis")
+                         (guard (expect-sugar close-paren-token?) "close parenthesis"))
+              ;(parse/seq list-exp
+               ;          (expect-sugar list-token?)
+                ;         (guard (expect-sugar open-paren-token?) "open parenthesis")
+                 ;        (guard parse-expression "an expression")
+                  ;       (guard (expect-sugar comma-token?) "a comma")
+                   ;      (guard parse-expression "an expression")
+                    ;     (guard (expect-sugar close-paren-token?) "close parenthesis")) No idea how to implement using parsers
               (parse/seq print-exp
                          (expect-sugar print-token?)
                          (guard (expect-sugar open-paren-token?) "open parenthesis")
