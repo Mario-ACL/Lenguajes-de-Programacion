@@ -28,6 +28,7 @@
 (struct null?-token token () #:transparent)
 (struct emptylist-token token () #:transparent)
 (struct list-token token () #:transparent)
+(struct print-token token () #:transparent)
 
 (provide
  token?
@@ -56,4 +57,5 @@
   [struct null?-token ()]
   [struct emptylist-token ()]
   [struct list-token ()]
+  [struct print-token ()]
   ))

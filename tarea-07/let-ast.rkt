@@ -20,6 +20,7 @@
 (struct null?-exp expression (exp1) #:transparent)
 (struct emptylist-exp expression () #:transparent)
 (struct list-exp expression (exps) #:transparent)
+(struct print-exp expression (exp1) #:transparent)
 
 (provide
  expression?
@@ -40,4 +41,6 @@
   [struct cdr-exp ((exp1 expression?))]
   [struct null?-exp ((exp1 expression?))]
   [struct emptylist-exp ()]
-  [struct list-exp ((exps (listof expression?)))]))
+  [struct list-exp ((exps (listof expression?)))]
+  [struct print-exp ((exp1 expression?))]
+  ))

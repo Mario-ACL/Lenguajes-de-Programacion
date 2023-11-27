@@ -41,6 +41,7 @@
                     [(null?-token) "null? operator"]
                     [(emptylist-token) "emptylist value"]
                     [(list-token) "list operator"]
+                    [(print-token) "print keyword"]
                     [_ "unexpected token"]))
           beg end)])))
 
@@ -136,7 +137,13 @@
                          (guard parse-expression "an expression")
                          (guard (expect-sugar close-paren-token?) "close parenthesis"))
               (parse/seq emptylist-exp
-                         (expect-sugar emptylist-token?)))
+                         (expect-sugar emptylist-token?))
+              (parse/seq print-exp
+                         (expect-sugar print-token?)
+                         (guard (expect-sugar open-paren-token?) "open parenthesis")
+                         (guard parse-expression "an expression")
+                         (guard (expect-sugar close-paren-token?) "close parenthesis")))
+   
    tokens))
 
 (define (parse/alt . parsers)
@@ -191,21 +198,5 @@
 
 (define (expect-sugar token?)
   (expect-some token? (const 'ignore)))
-
-(define parse-oparen
-    (expect-some open-paren-token?
-                 (lambda (token) 0)))
-
-(define parse-cparen
-    (expect-some close-paren-token?
-                 (lambda (token) 1)))
-
-(define (parse-paren tokens)
-  (define-values (val1 tokens1)
-    (parse-oparen tokens))
-  (cond
-    [(equal? val1 #f) (values #f tokens)]
-    [(equal? val1 'ignore) (parse-cparen tokens1)]
-    [(equal? val1 #t) (parse-oparen tokens1)]));added by me
 
 (provide parse-let)

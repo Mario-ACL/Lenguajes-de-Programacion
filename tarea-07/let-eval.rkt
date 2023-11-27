@@ -13,6 +13,30 @@
     [_
      (error (format "Expected program but got ~a" pgm))]))
 
+(define (print-value-of exp)
+  (match exp
+    [(num-val x)(printf "~a" x)]
+    [(bool-val x)(printf "~a" (if x "true" "false"))]
+    [(null-val)(printf "()")]
+    [(pair-val x)
+     ((printf "(")
+      (print-value-of (car x))
+      (print-value-of-rest (cdr x))
+      (printf ")")
+      )]))
+(define (print-value-of-rest exp)
+  (match exp
+    [(null-val)(printf "")]
+    [(pair-val x)
+     ((printf " ")
+      (print-value-of (car x))
+      (print-value-of-rest (cdr x))
+      )]
+    [_ ;this is the else of match-exp
+     (printf " . ")
+     (print-value-of exp)]))
+;Full credit for the print section to Gustavo, I only changed naming to something that made more sense for me
+
 (define (value-of exp env)
   (match exp
     [(const-exp num)
@@ -32,7 +56,7 @@
                  (expval->num (value-of exp2 env))))]
     [(div-exp exp1 exp2)
      (if (equal? 0 (expval->num (value-of exp2 env)))
-         (error (format "Divide by zero encountered"))
+         (error (format "Tried dividing by zero"))
          (num-val (quotient (expval->num (value-of exp1 env)) ;use of quotient to avoid decimals in result and expressions
                             (expval->num (value-of exp2 env)))))]
     [(zero?-exp exp1)
@@ -47,8 +71,13 @@
      (let ([val1 (value-of exp1 env)]
            [val2 (value-of exp2 env)])
        (pair-val (cons val1 val2)))]
+    [(print-exp exp1)
+     (print-value-of(value-of exp1 env))
+     (printf " ")
+     (num-val 1)]
     [_
-     (error (format "Expected expression but got ~a" exp))]))
+     (error (format "Expected expression but got ~a" exp))]
+    ))
 
 (provide
  (contract-out
